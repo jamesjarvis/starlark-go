@@ -119,10 +119,11 @@ func (x *AssignStmt) Span() (start, end Position) {
 // A DefStmt represents a function definition.
 type DefStmt struct {
 	commentsRef
-	Def    Position
-	Name   *Ident
-	Params []Expr // param = ident | ident=expr | * | *ident | **ident
-	Body   []Stmt
+	Def            Position
+	Name           *Ident
+	Params         []Expr // param = ident | ident=expr | * | *ident | **ident
+	Body           []Stmt
+	ReturnTypeHint TypeHint
 
 	Function interface{} // a *resolve.Function, set by resolver
 }
@@ -212,6 +213,12 @@ func (x *ReturnStmt) Span() (start, end Position) {
 	return x.Return, end
 }
 
+// TypeHint is a Starlark typehint.
+type TypeHint interface {
+	Node
+	typehint()
+}
+
 // An Expr is a Starlark expression.
 type Expr interface {
 	Node
@@ -246,6 +253,20 @@ type Ident struct {
 
 func (x *Ident) Span() (start, end Position) {
 	return x.NamePos, x.NamePos.add(x.Name)
+}
+
+type LiteralTypeHint struct {
+	commentsRef
+
+	TokenPos Position
+	Raw      string
+	Value    TypeHintValue
+}
+
+func (*LiteralTypeHint) typehint() {}
+
+func (x *LiteralTypeHint) Span() (start, end Position) {
+	return x.TokenPos, x.TokenPos.add(x.Raw)
 }
 
 // A Literal represents a literal string or number.
