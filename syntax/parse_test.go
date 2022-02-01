@@ -213,8 +213,14 @@ func TestTypeDefs(t *testing.T) {
 	for _, test := range []struct {
 		input, want string
 	}{
-		{`def f(a, b, c=d) -> str: return "hi"`,
-			`(DefStmt Name=f Params=(a b (BinaryExpr X=c Op== Y=d)) Body=((ReturnStmt Result="hi")) ReturnTypeHint=(LiteralTypeHint Raw=str Value=str))`},
+		{`def f() -> str: return "hi"`,
+			`(DefStmt Name=f Body=((ReturnStmt Result="hi")) ReturnTypeHint=(LiteralTypeHint Raw=str Value=str))`},
+		{`def f() -> int: return 1`,
+			`(DefStmt Name=f Body=((ReturnStmt Result=1)) ReturnTypeHint=(LiteralTypeHint Raw=int Value=int))`},
+		{`def f() -> float: return 1.0`,
+			`(DefStmt Name=f Body=((ReturnStmt Result=)) ReturnTypeHint=(LiteralTypeHint Raw=float Value=float))`},
+		// {`def f() -> list[str]: return ["hi"]`,
+		// 	`(DefStmt Name=f Body=((ReturnStmt Result=)) ReturnTypeHint=(LiteralTypeHint Raw=float Value=float))`},
 	} {
 		f, err := syntax.Parse("foo.star", test.input, 0)
 		if err != nil {
