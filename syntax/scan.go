@@ -79,6 +79,7 @@ const (
 	LTLT_EQ       // <<=
 	GTGT_EQ       // >>=
 	STARSTAR      // **
+	ARROW         // ->
 
 	// Keywords
 	AND
@@ -164,6 +165,7 @@ var tokenNames = [...]string{
 	LTLT_EQ:       "<<=",
 	GTGT_EQ:       ">>=",
 	STARSTAR:      "**",
+	ARROW:         "->",
 	AND:           "and",
 	BREAK:         "break",
 	CONTINUE:      "continue",
@@ -772,6 +774,10 @@ start:
 		case '+':
 			return PLUS
 		case '-':
+			if sc.peekRune() == '>' {
+				sc.readRune()
+				return ARROW
+			}
 			return MINUS
 		case '/':
 			if sc.peekRune() == '/' {
@@ -1120,4 +1126,37 @@ var keywordToken = map[string]Token{
 	"try":      ILLEGAL,
 	"with":     ILLEGAL,
 	"yield":    ILLEGAL,
+}
+
+type TypeHintValue int8
+
+const (
+	ILLEGAL_TYPE TypeHintValue = iota
+
+	LIST_TYPE
+	TUPLE_TYPE
+
+	INT_TYPE
+	STR_TYPE
+	FLOAT_TYPE
+	// moar?
+)
+
+func (th TypeHintValue) String() string { return typeHintNames[th] }
+
+var typeHintNames = [...]string{
+	ILLEGAL_TYPE: "illegal type hint",
+
+	LIST_TYPE:  "list",
+	TUPLE_TYPE: "tuple",
+
+	INT_TYPE:   "int",
+	STR_TYPE:   "str",
+	FLOAT_TYPE: "float",
+}
+
+var inbuiltTypeHints = map[string]TypeHintValue{
+	"int":   INT_TYPE,
+	"str":   STR_TYPE,
+	"float": FLOAT_TYPE,
 }
