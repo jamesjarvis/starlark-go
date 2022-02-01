@@ -208,6 +208,25 @@ def h():
 	}
 }
 
+// TestTypeDefs tests the ability to parse type hints on starlark snippets.
+func TestTypeDefs(t *testing.T) {
+	for _, test := range []struct {
+		input, want string
+	}{
+		{`def f(a, b, c=d) -> str: return "hi"`,
+			`(DefStmt Name=f Params=(a b (BinaryExpr X=c Op== Y=d)) Body=((ReturnStmt Result="hi")) ReturnTypeHint=(LiteralTypeHint Raw=str Value=str))`},
+	} {
+		f, err := syntax.Parse("foo.star", test.input, 0)
+		if err != nil {
+			t.Errorf("parse `%s` failed: %v", test.input, stripPos(err))
+			continue
+		}
+		if got := treeString(f.Stmts[0]); test.want != got {
+			t.Errorf("parse `%s` = %s, want %s", test.input, got, test.want)
+		}
+	}
+}
+
 // TestFileParseTrees tests sequences of statements, and particularly
 // handling of indentation, newlines, line continuations, and blank lines.
 func TestFileParseTrees(t *testing.T) {
@@ -385,6 +404,10 @@ func writeTree(out *bytes.Buffer, x reflect.Value) {
 				continue // skip comments fields
 			}
 			if f.Type() == reflect.TypeOf(syntax.Token(0)) {
+				fmt.Fprintf(out, " %s=%s", name, f.Interface())
+				continue
+			}
+			if f.Type() == reflect.TypeOf(syntax.TypeHintValue(0)) {
 				fmt.Fprintf(out, " %s=%s", name, f.Interface())
 				continue
 			}
