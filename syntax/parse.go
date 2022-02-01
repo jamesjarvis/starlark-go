@@ -161,13 +161,19 @@ func (p *parser) parseDefStmt() Stmt {
 	p.consume(LPAREN)
 	params := p.parseParams()
 	p.consume(RPAREN)
+	var hint TypeHint
+	if p.tok == ARROW {
+		p.nextToken()
+		hint = p.parseTypeHint()
+	}
 	p.consume(COLON)
 	body := p.parseSuite()
 	return &DefStmt{
-		Def:    defpos,
-		Name:   id,
-		Params: params,
-		Body:   body,
+		Def:            defpos,
+		Name:           id,
+		Params:         params,
+		Body:           body,
+		ReturnTypeHint: hint,
 	}
 }
 
@@ -474,6 +480,17 @@ func (p *parser) parseParams() []Expr {
 		params = append(params, id)
 	}
 	return params
+}
+
+func (p *parser) parseTypeHint() TypeHint {
+	raw := p.tokval.raw
+	th, ok := inbuiltTypeHints[raw]
+	if !ok {
+		p.in.errorf(p.tokval.pos, "unknown type %#v", raw)
+	}
+	t := &LiteralTypeHint{TokenPos: p.tokval.pos, Raw: raw, Value: th}
+	p.nextToken()
+	return t
 }
 
 // parseExpr parses an expression, possible consisting of a
