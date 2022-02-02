@@ -255,6 +255,10 @@ func (x *Ident) Span() (start, end Position) {
 	return x.NamePos, x.NamePos.add(x.Name)
 }
 
+// LiteralTypeHint represents the type hint of a non-composable type, such as str.
+// TODO: Implement ListTypeHint and TupleTypeHint or perhaps even a generic
+// ComposableTypeHint struct that has knowledge of sub-types it should check against?
+// This will also require changes in parse.go to allow for parsing list[str] etc syntax.
 type LiteralTypeHint struct {
 	commentsRef
 

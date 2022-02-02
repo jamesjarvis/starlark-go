@@ -482,6 +482,7 @@ func (p *parser) parseParams() []Expr {
 	return params
 }
 
+// parseTypeHint parses a type hint expression.
 func (p *parser) parseTypeHint() TypeHint {
 	raw := p.tokval.raw
 	th, ok := inbuiltTypeHints[raw]
