@@ -1155,6 +1155,8 @@ var typeHintNames = [...]string{
 	FLOAT_TYPE: "float",
 }
 
+// TODO(jamesjarvis): Ideally this should be extensible so users can define their own types.
+// Perhaps even extensible to the point that it is auto populated by the types definined within the starlark stdlib? :shrug:
 var inbuiltTypeHints = map[string]TypeHintValue{
 	"int":   INT_TYPE,
 	"str":   STR_TYPE,
