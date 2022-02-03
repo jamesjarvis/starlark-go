@@ -159,7 +159,7 @@ func (p *parser) parseDefStmt() Stmt {
 	defpos := p.nextToken() // consume DEF
 	id := p.parseIdent()
 	p.consume(LPAREN)
-	params := p.parseParams()
+	params := p.parseParams(true)
 	p.consume(RPAREN)
 	var hint TypeHint
 	if p.tok == ARROW {
@@ -436,7 +436,7 @@ func (p *parser) consume(t Token) Position {
 //      *Unary{Op: STAR}                                *
 //      *Unary{Op: STAR, X: *Ident}                     *args
 //      *Unary{Op: STARSTAR, X: *Ident}                 **kwargs
-func (p *parser) parseParams() []Expr {
+func (p *parser) parseParams(hintable bool) []Expr {
 	var params []Expr
 	for p.tok != RPAREN && p.tok != COLON && p.tok != EOF {
 		if len(params) > 0 {
@@ -465,7 +465,7 @@ func (p *parser) parseParams() []Expr {
 		// IDENT
 		// IDENT = test
 		id := p.parseIdent()
-		if p.tok == COLON {
+		if hintable && p.tok == COLON {
 			p.nextToken()
 			id.TypeHint = p.parseTypeHint()
 		}
@@ -592,7 +592,7 @@ func (p *parser) parseLambda(allowCond bool) Expr {
 	lambda := p.nextToken()
 	var params []Expr
 	if p.tok != COLON {
-		params = p.parseParams()
+		params = p.parseParams(false)
 	}
 	p.consume(COLON)
 
