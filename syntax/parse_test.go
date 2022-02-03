@@ -223,6 +223,10 @@ func TestTypeDefs(t *testing.T) {
 			`(DefStmt Name=f Body=((ReturnStmt Result=(ListExpr List=("hi")))) ReturnTypeHint=(ListTypeHint Raw=list InnerTypeHint=(LiteralTypeHint Raw=str Value=str)))`},
 		{`def f() -> list[list[str]]: return [["hi"]]`,
 			`(DefStmt Name=f Body=((ReturnStmt Result=(ListExpr List=((ListExpr List=("hi")))))) ReturnTypeHint=(ListTypeHint Raw=list InnerTypeHint=(ListTypeHint Raw=list InnerTypeHint=(LiteralTypeHint Raw=str Value=str))))`},
+		{`def f() -> tuple[str, int, float]: return ("hi", 1, 1.0)`,
+			`(DefStmt Name=f Body=((ReturnStmt Result=(ParenExpr X=(TupleExpr List=("hi" 1 ))))) ReturnTypeHint=(TupleTypeHint Raw=tuple InnerTypeHints=((LiteralTypeHint Raw=str Value=str) (LiteralTypeHint Raw=int Value=int) (LiteralTypeHint Raw=float Value=float))))`},
+		{`def f() -> tuple[list[str], tuple[int, int], float]: return (["hi"], (1, 2), 1.0)`,
+			`(DefStmt Name=f Body=((ReturnStmt Result=(ParenExpr X=(TupleExpr List=((ListExpr List=("hi")) (ParenExpr X=(TupleExpr List=(1 2))) ))))) ReturnTypeHint=(TupleTypeHint Raw=tuple InnerTypeHints=((ListTypeHint Raw=list InnerTypeHint=(LiteralTypeHint Raw=str Value=str)) (TupleTypeHint Raw=tuple InnerTypeHints=((LiteralTypeHint Raw=int Value=int) (LiteralTypeHint Raw=int Value=int))) (LiteralTypeHint Raw=float Value=float))))`},
 	} {
 		f, err := syntax.Parse("foo.star", test.input, 0)
 		if err != nil {
