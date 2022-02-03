@@ -231,6 +231,11 @@ func TestTypeDefs(t *testing.T) {
 			`(DefStmt Name=f Params=(a TypeHint=(LiteralTypeHint Raw=str Value=str)) Body=((BranchStmt Token=pass)))`},
 		{`def f(a: list[tuple[str, int]]): pass`,
 			`(DefStmt Name=f Params=(a TypeHint=(ListTypeHint Raw=list InnerTypeHint=(TupleTypeHint Raw=tuple InnerTypeHints=((LiteralTypeHint Raw=str Value=str) (LiteralTypeHint Raw=int Value=int))))) Body=((BranchStmt Token=pass)))`},
+		{`
+def f(
+	a: list[tuple[str, int]],
+): pass`,
+			`(DefStmt Name=f Params=(a TypeHint=(ListTypeHint Raw=list InnerTypeHint=(TupleTypeHint Raw=tuple InnerTypeHints=((LiteralTypeHint Raw=str Value=str) (LiteralTypeHint Raw=int Value=int))))) Body=((BranchStmt Token=pass)))`},
 	} {
 		f, err := syntax.Parse("foo.star", test.input, 0)
 		if err != nil {
