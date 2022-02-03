@@ -256,7 +256,7 @@ func (x *Ident) Span() (start, end Position) {
 }
 
 // LiteralTypeHint represents the type hint of a non-composable type, such as str.
-// TODO: Implement ListTypeHint and TupleTypeHint or perhaps even a generic
+// TODO: Implement TupleTypeHint or perhaps even a generic
 // ComposableTypeHint struct that has knowledge of sub-types it should check against?
 // This will also require changes in parse.go to allow for parsing list[str] etc syntax.
 type LiteralTypeHint struct {
@@ -270,6 +270,26 @@ type LiteralTypeHint struct {
 func (*LiteralTypeHint) typehint() {}
 
 func (x *LiteralTypeHint) Span() (start, end Position) {
+	return x.TokenPos, x.TokenPos.add(x.Raw)
+}
+
+// ListTypeHint represents the type hint of a composable list type, such as list[str].
+// This only allows a list of single types, unless a Union type is used.
+// TODO: Implement Union types.
+// TODO: Implement ListTypeHint and TupleTypeHint or perhaps even a generic
+// ComposableTypeHint struct that has knowledge of sub-types it should check against?
+// This will also require changes in parse.go to allow for parsing list[str] etc syntax.
+type ListTypeHint struct {
+	commentsRef
+
+	TokenPos      Position
+	Raw           string
+	InnerTypeHint TypeHint
+}
+
+func (*ListTypeHint) typehint() {}
+
+func (x *ListTypeHint) Span() (start, end Position) {
 	return x.TokenPos, x.TokenPos.add(x.Raw)
 }
 

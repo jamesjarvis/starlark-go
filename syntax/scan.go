@@ -1161,4 +1161,5 @@ var inbuiltTypeHints = map[string]TypeHintValue{
 	"int":   INT_TYPE,
 	"str":   STR_TYPE,
 	"float": FLOAT_TYPE,
+	"list":  LIST_TYPE,
 }
