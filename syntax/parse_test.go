@@ -219,8 +219,10 @@ func TestTypeDefs(t *testing.T) {
 			`(DefStmt Name=f Body=((ReturnStmt Result=1)) ReturnTypeHint=(LiteralTypeHint Raw=int Value=int))`},
 		{`def f() -> float: return 1.0`,
 			`(DefStmt Name=f Body=((ReturnStmt Result=)) ReturnTypeHint=(LiteralTypeHint Raw=float Value=float))`},
-		// {`def f() -> list[str]: return ["hi"]`,
-		// 	`(DefStmt Name=f Body=((ReturnStmt Result=)) ReturnTypeHint=(LiteralTypeHint Raw=float Value=float))`},
+		{`def f() -> list[str]: return ["hi"]`,
+			`(DefStmt Name=f Body=((ReturnStmt Result=(ListExpr List=("hi")))) ReturnTypeHint=(ListTypeHint Raw=list InnerTypeHint=(LiteralTypeHint Raw=str Value=str)))`},
+		{`def f() -> list[list[str]]: return [["hi"]]`,
+			`(DefStmt Name=f Body=((ReturnStmt Result=(ListExpr List=((ListExpr List=("hi")))))) ReturnTypeHint=(ListTypeHint Raw=list InnerTypeHint=(ListTypeHint Raw=list InnerTypeHint=(LiteralTypeHint Raw=str Value=str))))`},
 	} {
 		f, err := syntax.Parse("foo.star", test.input, 0)
 		if err != nil {
