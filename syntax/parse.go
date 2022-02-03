@@ -489,13 +489,28 @@ func (p *parser) parseTypeHint() TypeHint {
 	if !ok {
 		p.in.errorf(p.tokval.pos, "unknown type %#v", raw)
 	}
-	if th == LIST_TYPE {
+	if th == LIST_TYPE { // list[type]
 		p.nextToken()
 		p.consume(LBRACK)
 		innerTypeHint := p.parseTypeHint()
 		p.consume(RBRACK)
 
 		return &ListTypeHint{TokenPos: p.tokval.pos, Raw: raw, InnerTypeHint: innerTypeHint}
+	} else if th == TUPLE_TYPE { // tuple[type, type]
+		p.nextToken()
+		p.consume(LBRACK)
+		t := &TupleTypeHint{TokenPos: p.tokval.pos, Raw: raw, InnerTypeHints: []TypeHint{}}
+
+		for p.tok != RBRACK {
+			if len(t.InnerTypeHints) > 0 {
+				p.consume(COMMA)
+			}
+			innerTypeHint := p.parseTypeHint()
+			t.InnerTypeHints = append(t.InnerTypeHints, innerTypeHint)
+		}
+		p.consume(RBRACK)
+
+		return t
 	}
 	t := &LiteralTypeHint{TokenPos: p.tokval.pos, Raw: raw, Value: th}
 	p.nextToken()
