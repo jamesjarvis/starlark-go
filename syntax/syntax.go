@@ -248,6 +248,8 @@ type Ident struct {
 	NamePos Position
 	Name    string
 
+	TypeHint TypeHint
+
 	Binding interface{} // a *resolver.Binding, set by resolver
 }
 

@@ -465,6 +465,10 @@ func (p *parser) parseParams() []Expr {
 		// IDENT
 		// IDENT = test
 		id := p.parseIdent()
+		if p.tok == COLON {
+			p.nextToken()
+			id.TypeHint = p.parseTypeHint()
+		}
 		if p.tok == EQ { // default value
 			eq := p.nextToken()
 			dflt := p.parseTest()

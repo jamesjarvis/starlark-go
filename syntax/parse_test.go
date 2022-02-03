@@ -227,6 +227,8 @@ func TestTypeDefs(t *testing.T) {
 			`(DefStmt Name=f Body=((ReturnStmt Result=(ParenExpr X=(TupleExpr List=("hi" 1 ))))) ReturnTypeHint=(TupleTypeHint Raw=tuple InnerTypeHints=((LiteralTypeHint Raw=str Value=str) (LiteralTypeHint Raw=int Value=int) (LiteralTypeHint Raw=float Value=float))))`},
 		{`def f() -> tuple[list[str], tuple[int, int], float]: return (["hi"], (1, 2), 1.0)`,
 			`(DefStmt Name=f Body=((ReturnStmt Result=(ParenExpr X=(TupleExpr List=((ListExpr List=("hi")) (ParenExpr X=(TupleExpr List=(1 2))) ))))) ReturnTypeHint=(TupleTypeHint Raw=tuple InnerTypeHints=((ListTypeHint Raw=list InnerTypeHint=(LiteralTypeHint Raw=str Value=str)) (TupleTypeHint Raw=tuple InnerTypeHints=((LiteralTypeHint Raw=int Value=int) (LiteralTypeHint Raw=int Value=int))) (LiteralTypeHint Raw=float Value=float))))`},
+		{`def f(a:str): pass`,
+			`(DefStmt Name=f Params=(a TypeHint=(LiteralTypeHint Raw=str Value=str)) Body=((BranchStmt Token=pass)))`},
 	} {
 		f, err := syntax.Parse("foo.star", test.input, 0)
 		if err != nil {
@@ -403,6 +405,10 @@ func writeTree(out *bytes.Buffer, x reflect.Value) {
 			return
 		case syntax.Ident:
 			out.WriteString(v.Name)
+			if v.TypeHint != nil {
+				out.WriteString(" TypeHint=")
+				writeTree(out, x.FieldByName("TypeHint"))
+			}
 			return
 		}
 		fmt.Fprintf(out, "(%s", strings.TrimPrefix(x.Type().String(), "syntax."))
