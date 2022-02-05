@@ -246,16 +246,17 @@ func (p Position) isBefore(q Position) bool {
 
 // An scanner represents a single input file being parsed.
 type scanner struct {
-	rest           []byte    // rest of input (in REPL, a line of input)
-	token          []byte    // token being scanned
-	pos            Position  // current input position
-	depth          int       // nesting of [ ] { } ( )
-	indentstk      []int     // stack of indentation levels
-	dents          int       // number of saved INDENT (>0) or OUTDENT (<0) tokens to return
-	lineStart      bool      // after NEWLINE; convert spaces to indentation tokens
-	keepComments   bool      // accumulate comments in slice
-	lineComments   []Comment // list of full line comments (if keepComments)
-	suffixComments []Comment // list of suffix comments (if keepComments)
+	rest                []byte                   // rest of input (in REPL, a line of input)
+	token               []byte                   // token being scanned
+	pos                 Position                 // current input position
+	depth               int                      // nesting of [ ] { } ( )
+	indentstk           []int                    // stack of indentation levels
+	dents               int                      // number of saved INDENT (>0) or OUTDENT (<0) tokens to return
+	lineStart           bool                     // after NEWLINE; convert spaces to indentation tokens
+	keepComments        bool                     // accumulate comments in slice
+	lineComments        []Comment                // list of full line comments (if keepComments)
+	suffixComments      []Comment                // list of suffix comments (if keepComments)
+	additionalTypeHints map[string]TypeHintValue // map of additional type hints allowed by the parser.
 
 	readline func() ([]byte, error) // read next line of input (REPL only)
 }

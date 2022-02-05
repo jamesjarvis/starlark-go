@@ -23,6 +23,14 @@ const (
 	RetainComments Mode = 1 << iota // retain comments in AST; see Node.Comments
 )
 
+type opt func(*scanner)
+
+func WithAdditionalTypeHints(th map[string]TypeHintValue) opt {
+	return func(in *scanner) {
+		in.additionalTypeHints = th
+	}
+}
+
 // Parse parses the input data and returns the corresponding parse tree.
 //
 // If src != nil, ParseFile parses the source from src and the filename
@@ -30,10 +38,13 @@ const (
 // The type of the argument for the src parameter must be string,
 // []byte, io.Reader, or FilePortion.
 // If src == nil, ParseFile parses the file specified by filename.
-func Parse(filename string, src interface{}, mode Mode) (f *File, err error) {
+func Parse(filename string, src interface{}, mode Mode, opts ...opt) (f *File, err error) {
 	in, err := newScanner(filename, src, mode&RetainComments != 0)
 	if err != nil {
 		return nil, err
+	}
+	for _, opt := range opts {
+		opt(in)
 	}
 	p := parser{in: in}
 	defer p.in.recover(&err)
@@ -491,7 +502,10 @@ func (p *parser) parseTypeHint(withinUnion bool) TypeHint {
 	raw := p.tokval.raw
 	th, ok := inbuiltTypeHints[raw]
 	if !ok {
-		p.in.errorf(p.tokval.pos, "unknown type %#v", raw)
+		th, ok = p.in.additionalTypeHints[raw]
+		if !ok {
+			p.in.errorf(p.tokval.pos, "unknown type %#v", raw)
+		}
 	}
 
 	var t TypeHint
