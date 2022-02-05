@@ -255,6 +255,8 @@ def f(
 			`(DefStmt Name=f Params=(a TypeHint=(UnionTypeHint Raw= InnerTypeHints=((LiteralTypeHint Raw=int Value=int) (LiteralTypeHint Raw=str Value=str) (LiteralTypeHint Raw=float Value=float)))) Body=((BranchStmt Token=pass)))`},
 		{`def f() -> None: pass`,
 			`(DefStmt Name=f Body=((BranchStmt Token=pass)) ReturnTypeHint=(LiteralTypeHint Raw=None Value=None))`},
+		{`def f() -> dict[str, int]: return {"hi": 1}`,
+			`(DefStmt Name=f Body=((ReturnStmt Result=(DictExpr List=((DictEntry Key="hi" Value=1))))) ReturnTypeHint=(DictTypeHint Raw=dict KeyTypeHint=(LiteralTypeHint Raw=str Value=str) ValueTypeHint=(LiteralTypeHint Raw=int Value=int)))`},
 	} {
 		f, err := syntax.Parse("foo.star", test.input, 0)
 		if err != nil {

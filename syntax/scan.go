@@ -1135,6 +1135,7 @@ const (
 
 	LIST_TYPE
 	TUPLE_TYPE
+	DICT_TYPE
 	UNION_TYPE
 
 	INT_TYPE
@@ -1152,6 +1153,7 @@ var typeHintNames = [...]string{
 
 	LIST_TYPE:  "list",
 	TUPLE_TYPE: "tuple",
+	DICT_TYPE:  "dict",
 	UNION_TYPE: "Union", // UNION_TYPE can be used with A | B syntax.
 
 	INT_TYPE:   "int",
@@ -1172,4 +1174,5 @@ var inbuiltTypeHints = map[string]TypeHintValue{
 
 	"list":  LIST_TYPE,
 	"tuple": TUPLE_TYPE,
+	"dict":  DICT_TYPE,
 }

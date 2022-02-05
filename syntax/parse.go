@@ -503,6 +503,15 @@ func (p *parser) parseTypeHint(withinUnion bool) TypeHint {
 		p.consume(RBRACK)
 
 		t = &ListTypeHint{TokenPos: p.tokval.pos, Raw: raw, InnerTypeHint: innerTypeHint}
+	} else if th == DICT_TYPE {
+		p.nextToken()
+		p.consume(LBRACK)
+		keyTypeHint := p.parseTypeHint(false)
+		p.consume(COMMA)
+		valTypeHint := p.parseTypeHint(false)
+		p.consume(RBRACK)
+
+		t = &DictTypeHint{TokenPos: p.tokval.pos, Raw: raw, KeyTypeHint: keyTypeHint, ValueTypeHint: valTypeHint}
 	} else if th == TUPLE_TYPE { // tuple[type, type]
 		p.nextToken()
 		p.consume(LBRACK)

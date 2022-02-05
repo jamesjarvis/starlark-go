@@ -305,6 +305,23 @@ func (x *TupleTypeHint) Span() (start, end Position) {
 	return x.TokenPos, x.TokenPos.add(x.Raw)
 }
 
+// DictTypeHint represents the key, value type hints of a dictionary type, such as dict[str, int].
+// Dictionaries only allow for key, value sub types, however sub types may be any type.
+type DictTypeHint struct {
+	commentsRef
+
+	TokenPos      Position
+	Raw           string
+	KeyTypeHint   TypeHint
+	ValueTypeHint TypeHint
+}
+
+func (*DictTypeHint) typehint() {}
+
+func (x *DictTypeHint) Span() (start, end Position) {
+	return x.TokenPos, x.TokenPos.add(x.Raw)
+}
+
 // UnionTypeHint represents the type hint of a composable union type, such as str | int.
 // Unions represent a value being one of a set of potential types.
 type UnionTypeHint struct {
