@@ -1139,6 +1139,7 @@ const (
 	INT_TYPE
 	STR_TYPE
 	FLOAT_TYPE
+	ANY_TYPE
 	// moar?
 )
 
@@ -1153,6 +1154,7 @@ var typeHintNames = [...]string{
 	INT_TYPE:   "int",
 	STR_TYPE:   "str",
 	FLOAT_TYPE: "float",
+	ANY_TYPE:   "Any",
 }
 
 // TODO(jamesjarvis): Ideally this should be extensible so users can define their own types.
@@ -1161,6 +1163,8 @@ var inbuiltTypeHints = map[string]TypeHintValue{
 	"int":   INT_TYPE,
 	"str":   STR_TYPE,
 	"float": FLOAT_TYPE,
+	"Any":   ANY_TYPE,
+
 	"list":  LIST_TYPE,
 	"tuple": TUPLE_TYPE,
 }

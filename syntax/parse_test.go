@@ -240,6 +240,8 @@ def f(
 	str
 ]: pass`,
 			`(DefStmt Name=f Params=(a TypeHint=(ListTypeHint Raw=list InnerTypeHint=(TupleTypeHint Raw=tuple InnerTypeHints=((LiteralTypeHint Raw=str Value=str) (LiteralTypeHint Raw=int Value=int))))) Body=((BranchStmt Token=pass)) ReturnTypeHint=(ListTypeHint Raw=list InnerTypeHint=(LiteralTypeHint Raw=str Value=str)))`},
+		{`def f(a:Any): pass`,
+			`(DefStmt Name=f Params=(a TypeHint=(LiteralTypeHint Raw=Any Value=Any)) Body=((BranchStmt Token=pass)))`},
 	} {
 		f, err := syntax.Parse("foo.star", test.input, 0)
 		if err != nil {
