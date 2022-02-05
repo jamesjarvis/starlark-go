@@ -244,6 +244,8 @@ def f(
 			`(DefStmt Name=f Params=(a TypeHint=(LiteralTypeHint Raw=Any Value=Any)) Body=((BranchStmt Token=pass)))`},
 		{`def f(a:int | str | float): pass`,
 			`(DefStmt Name=f Params=(a TypeHint=(UnionTypeHint Raw=int InnerTypeHints=((LiteralTypeHint Raw=int Value=int) (LiteralTypeHint Raw=str Value=str) (LiteralTypeHint Raw=float Value=float)))) Body=((BranchStmt Token=pass)))`},
+		{`def f() -> None: pass`,
+			`(DefStmt Name=f Body=((BranchStmt Token=pass)) ReturnTypeHint=(LiteralTypeHint Raw=None Value=None))`},
 	} {
 		f, err := syntax.Parse("foo.star", test.input, 0)
 		if err != nil {
