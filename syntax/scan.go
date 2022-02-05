@@ -1135,6 +1135,7 @@ const (
 
 	LIST_TYPE
 	TUPLE_TYPE
+	UNION_TYPE
 
 	INT_TYPE
 	STR_TYPE
@@ -1150,6 +1151,7 @@ var typeHintNames = [...]string{
 
 	LIST_TYPE:  "list",
 	TUPLE_TYPE: "tuple",
+	UNION_TYPE: "Union", // UNION_TYPE can be used with A | B syntax.
 
 	INT_TYPE:   "int",
 	STR_TYPE:   "str",

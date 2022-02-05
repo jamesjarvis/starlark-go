@@ -164,7 +164,7 @@ func (p *parser) parseDefStmt() Stmt {
 	var hint TypeHint
 	if p.tok == ARROW {
 		p.nextToken()
-		hint = p.parseTypeHint()
+		hint = p.parseTypeHint(false)
 	}
 	p.consume(COLON)
 	body := p.parseSuite()
@@ -467,7 +467,7 @@ func (p *parser) parseParams(hintable bool) []Expr {
 		id := p.parseIdent()
 		if hintable && p.tok == COLON {
 			p.nextToken()
-			id.TypeHint = p.parseTypeHint()
+			id.TypeHint = p.parseTypeHint(false)
 		}
 		if p.tok == EQ { // default value
 			eq := p.nextToken()
@@ -487,7 +487,7 @@ func (p *parser) parseParams(hintable bool) []Expr {
 }
 
 // parseTypeHint parses a type hint expression.
-func (p *parser) parseTypeHint() TypeHint {
+func (p *parser) parseTypeHint(withinUnion bool) TypeHint {
 	raw := p.tokval.raw
 	th, ok := inbuiltTypeHints[raw]
 	if !ok {
@@ -496,7 +496,7 @@ func (p *parser) parseTypeHint() TypeHint {
 	if th == LIST_TYPE { // list[type]
 		p.nextToken()
 		p.consume(LBRACK)
-		innerTypeHint := p.parseTypeHint()
+		innerTypeHint := p.parseTypeHint(false)
 		p.consume(RBRACK)
 
 		return &ListTypeHint{TokenPos: p.tokval.pos, Raw: raw, InnerTypeHint: innerTypeHint}
@@ -509,7 +509,7 @@ func (p *parser) parseTypeHint() TypeHint {
 			if len(t.InnerTypeHints) > 0 {
 				p.consume(COMMA)
 			}
-			innerTypeHint := p.parseTypeHint()
+			innerTypeHint := p.parseTypeHint(false)
 			t.InnerTypeHints = append(t.InnerTypeHints, innerTypeHint)
 		}
 		p.consume(RBRACK)
@@ -518,6 +518,20 @@ func (p *parser) parseTypeHint() TypeHint {
 	}
 	t := &LiteralTypeHint{TokenPos: p.tokval.pos, Raw: raw, Value: th}
 	p.nextToken()
+	if p.tok == PIPE && !withinUnion {
+		// We are in the union-verse now...
+		p.consume(PIPE)
+		u := &UnionTypeHint{TokenPos: p.tokval.pos, Raw: raw, InnerTypeHints: []TypeHint{t}}
+		for {
+			innerTypeHint := p.parseTypeHint(true)
+			u.InnerTypeHints = append(u.InnerTypeHints, innerTypeHint)
+			if p.tok != PIPE {
+				break
+			}
+			p.consume(PIPE)
+		}
+		return u
+	}
 	return t
 }
 

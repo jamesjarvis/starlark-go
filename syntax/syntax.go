@@ -274,7 +274,6 @@ func (x *LiteralTypeHint) Span() (start, end Position) {
 
 // ListTypeHint represents the type hint of a composable list type, such as list[str].
 // This only allows a list of single types, unless a Union type is used.
-// TODO: Implement Union types.
 type ListTypeHint struct {
 	commentsRef
 
@@ -303,6 +302,22 @@ type TupleTypeHint struct {
 func (*TupleTypeHint) typehint() {}
 
 func (x *TupleTypeHint) Span() (start, end Position) {
+	return x.TokenPos, x.TokenPos.add(x.Raw)
+}
+
+// UnionTypeHint represents the type hint of a composable union type, such as str | int.
+// Unions represent a value being one of a set of potential types.
+type UnionTypeHint struct {
+	commentsRef
+
+	TokenPos       Position
+	Raw            string
+	InnerTypeHints []TypeHint
+}
+
+func (*UnionTypeHint) typehint() {}
+
+func (x *UnionTypeHint) Span() (start, end Position) {
 	return x.TokenPos, x.TokenPos.add(x.Raw)
 }
 
