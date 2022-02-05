@@ -503,7 +503,7 @@ func (p *parser) parseTypeHint(withinUnion bool) TypeHint {
 		p.consume(RBRACK)
 
 		t = &ListTypeHint{TokenPos: p.tokval.pos, Raw: raw, InnerTypeHint: innerTypeHint}
-	} else if th == DICT_TYPE {
+	} else if th == DICT_TYPE { // dict[type, type]
 		p.nextToken()
 		p.consume(LBRACK)
 		keyTypeHint := p.parseTypeHint(false)
@@ -512,7 +512,7 @@ func (p *parser) parseTypeHint(withinUnion bool) TypeHint {
 		p.consume(RBRACK)
 
 		t = &DictTypeHint{TokenPos: p.tokval.pos, Raw: raw, KeyTypeHint: keyTypeHint, ValueTypeHint: valTypeHint}
-	} else if th == TUPLE_TYPE { // tuple[type, type]
+	} else if th == TUPLE_TYPE { // tuple[type, type, type...]
 		p.nextToken()
 		p.consume(LBRACK)
 		tupleT := &TupleTypeHint{TokenPos: p.tokval.pos, Raw: raw, InnerTypeHints: []TypeHint{}}
@@ -527,12 +527,13 @@ func (p *parser) parseTypeHint(withinUnion bool) TypeHint {
 		p.consume(RBRACK)
 
 		t = tupleT
-	} else {
+	} else { // type
 		t = &LiteralTypeHint{TokenPos: p.tokval.pos, Raw: raw, Value: th}
 		p.nextToken()
 	}
 
 	if p.tok == PIPE && !withinUnion {
+		// type | type
 		// We are in the union-verse now...
 		p.consume(PIPE)
 
