@@ -493,35 +493,41 @@ func (p *parser) parseTypeHint(withinUnion bool) TypeHint {
 	if !ok {
 		p.in.errorf(p.tokval.pos, "unknown type %#v", raw)
 	}
+
+	var t TypeHint
+
 	if th == LIST_TYPE { // list[type]
 		p.nextToken()
 		p.consume(LBRACK)
 		innerTypeHint := p.parseTypeHint(false)
 		p.consume(RBRACK)
 
-		return &ListTypeHint{TokenPos: p.tokval.pos, Raw: raw, InnerTypeHint: innerTypeHint}
+		t = &ListTypeHint{TokenPos: p.tokval.pos, Raw: raw, InnerTypeHint: innerTypeHint}
 	} else if th == TUPLE_TYPE { // tuple[type, type]
 		p.nextToken()
 		p.consume(LBRACK)
-		t := &TupleTypeHint{TokenPos: p.tokval.pos, Raw: raw, InnerTypeHints: []TypeHint{}}
+		tupleT := &TupleTypeHint{TokenPos: p.tokval.pos, Raw: raw, InnerTypeHints: []TypeHint{}}
 
 		for p.tok != RBRACK {
-			if len(t.InnerTypeHints) > 0 {
+			if len(tupleT.InnerTypeHints) > 0 {
 				p.consume(COMMA)
 			}
 			innerTypeHint := p.parseTypeHint(false)
-			t.InnerTypeHints = append(t.InnerTypeHints, innerTypeHint)
+			tupleT.InnerTypeHints = append(tupleT.InnerTypeHints, innerTypeHint)
 		}
 		p.consume(RBRACK)
 
-		return t
+		t = tupleT
+	} else {
+		t = &LiteralTypeHint{TokenPos: p.tokval.pos, Raw: raw, Value: th}
+		p.nextToken()
 	}
-	t := &LiteralTypeHint{TokenPos: p.tokval.pos, Raw: raw, Value: th}
-	p.nextToken()
+
 	if p.tok == PIPE && !withinUnion {
 		// We are in the union-verse now...
 		p.consume(PIPE)
-		u := &UnionTypeHint{TokenPos: p.tokval.pos, Raw: raw, InnerTypeHints: []TypeHint{t}}
+
+		u := &UnionTypeHint{TokenPos: p.tokval.pos, InnerTypeHints: []TypeHint{t}}
 		for {
 			innerTypeHint := p.parseTypeHint(true)
 			u.InnerTypeHints = append(u.InnerTypeHints, innerTypeHint)
@@ -532,6 +538,7 @@ func (p *parser) parseTypeHint(withinUnion bool) TypeHint {
 		}
 		return u
 	}
+
 	return t
 }
 

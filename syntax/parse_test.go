@@ -240,10 +240,19 @@ def f(
 	str
 ]: pass`,
 			`(DefStmt Name=f Params=(a TypeHint=(ListTypeHint Raw=list InnerTypeHint=(TupleTypeHint Raw=tuple InnerTypeHints=((LiteralTypeHint Raw=str Value=str) (LiteralTypeHint Raw=int Value=int))))) Body=((BranchStmt Token=pass)) ReturnTypeHint=(ListTypeHint Raw=list InnerTypeHint=(LiteralTypeHint Raw=str Value=str)))`},
+		{`
+def f(
+	a: list[
+		tuple[str, int | None]
+	],
+) -> list[
+	str
+] | None: pass`,
+			`(DefStmt Name=f Params=(a TypeHint=(ListTypeHint Raw=list InnerTypeHint=(TupleTypeHint Raw=tuple InnerTypeHints=((LiteralTypeHint Raw=str Value=str) (UnionTypeHint Raw= InnerTypeHints=((LiteralTypeHint Raw=int Value=int) (LiteralTypeHint Raw=None Value=None))))))) Body=((BranchStmt Token=pass)) ReturnTypeHint=(UnionTypeHint Raw= InnerTypeHints=((ListTypeHint Raw=list InnerTypeHint=(LiteralTypeHint Raw=str Value=str)) (LiteralTypeHint Raw=None Value=None))))`},
 		{`def f(a:Any): pass`,
 			`(DefStmt Name=f Params=(a TypeHint=(LiteralTypeHint Raw=Any Value=Any)) Body=((BranchStmt Token=pass)))`},
 		{`def f(a:int | str | float): pass`,
-			`(DefStmt Name=f Params=(a TypeHint=(UnionTypeHint Raw=int InnerTypeHints=((LiteralTypeHint Raw=int Value=int) (LiteralTypeHint Raw=str Value=str) (LiteralTypeHint Raw=float Value=float)))) Body=((BranchStmt Token=pass)))`},
+			`(DefStmt Name=f Params=(a TypeHint=(UnionTypeHint Raw= InnerTypeHints=((LiteralTypeHint Raw=int Value=int) (LiteralTypeHint Raw=str Value=str) (LiteralTypeHint Raw=float Value=float)))) Body=((BranchStmt Token=pass)))`},
 		{`def f() -> None: pass`,
 			`(DefStmt Name=f Body=((BranchStmt Token=pass)) ReturnTypeHint=(LiteralTypeHint Raw=None Value=None))`},
 	} {
