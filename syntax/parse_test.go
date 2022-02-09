@@ -215,6 +215,8 @@ func TestTypeDefs(t *testing.T) {
 	}{
 		{`def f() -> str: return "hi"`,
 			`(DefStmt Name=f Body=((ReturnStmt Result="hi")) ReturnTypeHint=(LiteralTypeHint Raw=str Value=str))`},
+		{`def f() -> bool: return True`,
+			`(DefStmt Name=f Body=((ReturnStmt Result=True)) ReturnTypeHint=(LiteralTypeHint Raw=bool Value=bool))`},
 		{`def f() -> int: return 1`,
 			`(DefStmt Name=f Body=((ReturnStmt Result=1)) ReturnTypeHint=(LiteralTypeHint Raw=int Value=int))`},
 		{`def f() -> float: return 1.0`,

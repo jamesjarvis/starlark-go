@@ -1142,6 +1142,7 @@ const (
 	INT_TYPE
 	STR_TYPE
 	FLOAT_TYPE
+	BOOL_TYPE
 	ANY_TYPE
 	NONE_TYPE
 	// moar?
@@ -1160,6 +1161,7 @@ var typeHintNames = [...]string{
 	INT_TYPE:   "int",
 	STR_TYPE:   "str",
 	FLOAT_TYPE: "float",
+	BOOL_TYPE:  "bool",
 	ANY_TYPE:   "Any",
 	NONE_TYPE:  "None",
 }
@@ -1170,6 +1172,7 @@ var inbuiltTypeHints = map[string]TypeHintValue{
 	"int":   INT_TYPE,
 	"str":   STR_TYPE,
 	"float": FLOAT_TYPE,
+	"bool":  BOOL_TYPE,
 	"Any":   ANY_TYPE,
 	"None":  NONE_TYPE,
 
